@@ -9,14 +9,13 @@ export USE_ESMF_THREADING="YES"  # Toggle to use ESMF-managed threading or tradi
 export COPY_FINAL_RESTARTS="NO" # Toggle to copy restarts from the end of GFS/GEFS Run (GDAS is handled seperately)
 
 # Source model specific information that is resolution dependent
-string="--fv3 ${CASE}"
-[[ "${DO_OCN}" == "YES" ]] && string="${string} --mom6 ${OCNRES}"
-[[ "${DO_ICE}" == "YES" ]] && string="${string} --cice6 ${ICERES}"
-[[ "${DO_WAVE}" == "YES" ]] && string="${string} --ww3 ${waveGRD// /;}"
-[[ "${DO_AERO_FCST}" == "YES" ]] && string="${string} --gocart"
+string=("--fv3" "${CASE}")
+[[ "${DO_OCN}" == "YES" ]] && string+=("--mom6" "${OCNRES}")
+[[ "${DO_ICE}" == "YES" ]] && string+=("--cice6" "${ICERES}")
+[[ "${DO_WAVE}" == "YES" ]] && string+=("--ww3" "${waveGRD// /;}")
+[[ "${DO_AERO_FCST}" == "YES" ]] && string+=("--gocart")
 # We are counting on $string being multiple arguments
-# shellcheck disable=SC2086
-source "${EXPDIR}/config.ufs" ${string}
+source "${EXPDIR}/config.ufs" "${string[@]}"
 
 # Forecast length for GFS forecast
 case ${RUN} in
